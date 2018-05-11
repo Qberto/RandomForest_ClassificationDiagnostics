@@ -191,6 +191,11 @@ def select_false_negatives(predicted_fc_lyr_name, known_val_field, predicted_val
 	                                        None)	   
 
 
-known_val_field = "ARSON"
-predicted_val_field = "PREDICTED"
-trained_field = "TRAINED_ID"
+# known_val_field = "ARSON"
+# predicted_val_field = "PREDICTED"
+# trained_field = "TRAINED_ID"
+
+# TODOs
+# - Utility to determine imbalance
+# - Utility to generate balanced input
+# - Utility to transfer diagnostics output as fields to output dataset (fields with FP, FN, TP, TN) in order to symbolize, etc.
