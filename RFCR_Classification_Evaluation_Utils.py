@@ -1,6 +1,7 @@
 import pandas as pd
 import arcpy
 import math
+import random
 
 def convert_featureclass_to_pddataframe(fc, fields_list=["*"], remove_index=False):
     """
@@ -190,6 +191,67 @@ def select_false_negatives(predicted_fc_lyr_name, known_val_field, predicted_val
 	                                                                                     negative_val), 
 	                                        None)	   
 
+
+def get_fc_name_from_full_path(fc_path):
+    """
+    Returns the feature class name given a full path to the feature class
+    :param fc_path: String - Full path to FC
+    :return: String - FC Name
+    """
+    return fc_path.split("\\")[-1]
+
+def create_where_clause_from_list(targetdata, targetdata_field, attributelist):
+    """
+    Create a SQL statement given a list of attributes
+    :param targetdata:
+    :param targetdata_field:
+    :param attributelist:
+    :return:
+    """
+    whereclause = ""
+    strlist = []
+    #Check to see if attribute list is an empty list
+    if not (attributelist):
+        raise ValueError("Empty List")
+    #Assign strlist if a list of strings is passed
+    if all(isinstance(item, (str)) for item in attributelist):
+        strlist = "'" + "','".join(attributelist) + "'"
+    #Assign strlist if a list of numbers is passed
+    if all(isinstance(item, (int, float)) for item in attributelist):
+        strlist = ",".join([str(item) for item in attributelist])
+    #Create the whereclause from strlist and return the whereclause
+    if strlist:
+        whereclause = "{0} in ({1})".format(arcpy.AddFieldDelimiters(targetdata, targetdata_field), strlist)
+        return whereclause
+    #Raise a value error if the attribute list was not all strings or all numbers
+    else:
+        raise ValueError("List items are not all strings or all numbers.")    
+
+def create_balanced_inputdataset(input_fc, class_field, positive_val, negative_val, workspace=arcpy.env.workspace):
+    # Retrieve a count of total records
+    total_record_count = int(arcpy.GetCount_management(input_fc).getOutput(0))
+    print("Total records: {0}".format(str(total_record_count)))
+
+    # Retrieve a count of positive_val records
+    positive_where_clause = "{0} = {1}".format(arcpy.AddFieldDelimiters(input_fc, "ARSON"), positive_val) 
+    arcpy.SelectLayerByAttribute_management(input_fc, 'NEW_SELECTION', positive_where_clause)
+    positive_record_count = int(arcpy.GetCount_management(input_fc).getOutput(0))
+    print("Total positive class records: {0}".format(str(positive_record_count)))
+     
+    # Make a random selection of negative_val records with a selection total that equals the amount of positive_val records
+    print("Making negative class selection...")
+    arcpy.SelectLayerByAttribute_management(input_fc, 'NEW_SELECTION', positive_where_clause, 'INVERT')
+    object_ids = [r[0] for r in arcpy.da.SearchCursor(input_fc, ['OID@'])]
+    random_ids = random.sample(object_ids, positive_record_count)
+    random_neg_where_clause = "OBJECTID IN {0}".format(tuple(random_ids))
+    arcpy.SelectLayerByAttribute_management(input_fc, 'NEW_SELECTION', random_neg_where_clause)
+
+    # Add a selection that includes the positive_val records
+    arcpy.SelectLayerByAttribute_management(input_fc, 'ADD_TO_SELECTION', positive_where_clause)
+
+    # Export to a new output location
+    output_name = get_fc_name_from_full_path(input_fc) + "_balanced"
+    arcpy.FeatureClassToFeatureClass_conversion(input_fc, workspace, output_name)
 
 # known_val_field = "ARSON"
 # predicted_val_field = "PREDICTED"
