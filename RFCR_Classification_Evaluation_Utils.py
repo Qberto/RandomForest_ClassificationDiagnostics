@@ -257,6 +257,8 @@ def create_balanced_inputdataset(input_fc, class_field, positive_val, negative_v
 # predicted_val_field = "PREDICTED"
 # trained_field = "TRAINED_ID"
 
+# evaluate_classification("RFCP_Trained_Bal_Trails", known_val_field, predicted_val_field, verbose=True)
+
 # TODOs
 # - Utility to determine imbalance
 # - Utility to generate balanced input
