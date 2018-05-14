@@ -151,45 +151,45 @@ def evaluate_classification(predicted_fc, known_val_field, predicted_val_field, 
 
 def select_true_positives(predicted_fc_lyr_name, known_val_field, predicted_val_field, trained_field="TRAINED_ID", positive_val=1):
 
-	arcpy.management.SelectLayerByAttribute(predicted_fc_lyr_name, 
-	                                        "NEW_SELECTION", 
-	                                        "{0} = 0 And {1} = {3} And {2} = {3}".format(trained_field, 
-	                                                                                     known_val_field, 
-	                                                                                     predicted_val_field,
-	                                                                                     positive_val), 
-	                                        None)
+    arcpy.SelectLayerByAttribute_management(predicted_fc_lyr_name, 
+                                            "NEW_SELECTION", 
+                                            "{0} = 0 And {1} = {3} And {2} = {3}".format(trained_field, 
+                                                                                         known_val_field, 
+                                                                                         predicted_val_field,
+                                                                                         positive_val), 
+                                            None)
 
 def select_true_negatives(predicted_fc_lyr_name, known_val_field, predicted_val_field, trained_field="TRAINED_ID", negative_val=0):
 
-	arcpy.management.SelectLayerByAttribute(predicted_fc_lyr_name, 
-	                                        "NEW_SELECTION", 
-	                                        "{0} = 0 And {1} = {3} And {2} = {3}".format(trained_field, 
-	                                                                                     known_val_field, 
-	                                                                                     predicted_val_field,
-	                                                                                     negative_val), 
-	                                        None)
+    arcpy.SelectLayerByAttribute_management(predicted_fc_lyr_name, 
+                                            "NEW_SELECTION", 
+                                            "{0} = 0 And {1} = {3} And {2} = {3}".format(trained_field, 
+                                                                                         known_val_field, 
+                                                                                         predicted_val_field,
+                                                                                         negative_val), 
+                                            None)
 
 def select_false_positives(predicted_fc_lyr_name, known_val_field, predicted_val_field, trained_field="TRAINED_ID", positive_val=1, negative_val=0):
 
-	arcpy.management.SelectLayerByAttribute(predicted_fc_lyr_name, 
-	                                        "NEW_SELECTION", 
-	                                        "{0} = 0 And {1} = {3} And {2} = {4}".format(trained_field, 
-	                                                                                     known_val_field, 
-	                                                                                     predicted_val_field,
-	                                                                                     positive_val,
-	                                                                                     negative_val), 
-	                                        None)
+    arcpy.SelectLayerByAttribute_management(predicted_fc_lyr_name, 
+                                            "NEW_SELECTION", 
+                                            "{0} = 0 And {1} = {3} And {2} = {4}".format(trained_field, 
+                                                                                         known_val_field, 
+                                                                                         predicted_val_field,
+                                                                                         positive_val,
+                                                                                         negative_val), 
+                                            None)
 
 def select_false_negatives(predicted_fc_lyr_name, known_val_field, predicted_val_field, trained_field="TRAINED_ID", positive_val=1, negative_val=0):
 
-	arcpy.management.SelectLayerByAttribute(predicted_fc_lyr_name, 
-	                                        "NEW_SELECTION", 
-	                                        "{0} = 0 And {1} = {4} And {2} = {3}".format(trained_field, 
-	                                                                                     known_val_field, 
-	                                                                                     predicted_val_field,
-	                                                                                     positive_val,
-	                                                                                     negative_val), 
-	                                        None)	   
+    arcpy.SelectLayerByAttribute_management(predicted_fc_lyr_name, 
+                                            "NEW_SELECTION", 
+                                            "{0} = 0 And {1} = {4} And {2} = {3}".format(trained_field, 
+                                                                                         known_val_field, 
+                                                                                         predicted_val_field,
+                                                                                         positive_val,
+                                                                                         negative_val), 
+                                            None)      
 
 
 def get_fc_name_from_full_path(fc_path):
