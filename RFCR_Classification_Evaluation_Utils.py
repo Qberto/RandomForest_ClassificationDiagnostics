@@ -253,6 +253,25 @@ def create_balanced_inputdataset(input_fc, class_field, positive_val, negative_v
     output_name = get_fc_name_from_full_path(input_fc) + "_balanced"
     arcpy.FeatureClassToFeatureClass_conversion(input_fc, workspace, output_name)
 
+def select_random_records(input_lyr, percent_selection, object_id_field="OBJECTID"):
+    import random
+    total_record_count = int(arcpy.GetCount_management(input_lyr).getOutput(0))
+    print(total_record_count)
+    percent_selection_count = int(total_record_count * (percent_selection / 100))
+    print(percent_selection_count)
+    object_ids = [r[0] for r in arcpy.da.SearchCursor(input_lyr, ['OID@'])]
+    random_ids = random.sample(object_ids, percent_selection_count)
+    random_neg_where_clause = "{0} IN {1}".format(object_id_field, tuple(random_ids))
+    arcpy.SelectLayerByAttribute_management(input_lyr, 'NEW_SELECTION', random_neg_where_clause)
+
+def calculate_random_vals_in_range(input_lyr, field, range_start, range_end):
+    with arcpy.da.UpdateCursor(input_lyr, field) as cursor:
+        for row in cursor:
+            from random import randint
+            random_val = randint(range_start, range_end)
+            row[0] = random_val
+            cursor.updateRow(row)
+
 # known_val_field = "ARSON"
 # predicted_val_field = "PREDICTED"
 # trained_field = "TRAINED_ID"
